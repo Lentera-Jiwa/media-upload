@@ -19,9 +19,7 @@ const els = {
   searchMode: document.getElementById("searchMode"),
   searchQuery: document.getElementById("searchQuery"),
   searchBtn: document.getElementById("searchBtn"),
-  searchResult: document.getElementById("searchResult"),
-  refreshBtn: document.getElementById("refreshBtn"),
-  recentResult: document.getElementById("recentResult")
+  searchResult: document.getElementById("searchResult")
 };
 
 const extensions = {
@@ -123,7 +121,6 @@ els.uploadForm.addEventListener("submit", async (e) => {
     els.uploadForm.reset();
     els.file.disabled = true;
     els.fileInfo.classList.add("hidden");
-    loadRecent();
   } catch (err) {
     showResult(els.uploadResult, "error", err.message || "Terjadi kesalahan.");
   } finally {
@@ -136,7 +133,6 @@ els.searchBtn.addEventListener("click", searchFiles);
 els.searchQuery.addEventListener("keydown", e => {
   if (e.key === "Enter") searchFiles();
 });
-els.refreshBtn.addEventListener("click", loadRecent);
 
 async function searchFiles() {
   const q = els.searchQuery.value.trim();
@@ -156,17 +152,6 @@ async function searchFiles() {
     renderItems(els.searchResult, result.results, els.searchMode.value === "visitor");
   } catch (err) {
     showResult(els.searchResult,"error",err.message || "Pencarian gagal.");
-  }
-}
-
-async function loadRecent() {
-  els.recentResult.innerHTML = `<div class="result">Memuat...</div>`;
-  try {
-    const result = await postJSON({action:"list",limit:20});
-    if (!result.success) throw new Error(result.message);
-    renderItems(els.recentResult, result.results, false);
-  } catch (err) {
-    showResult(els.recentResult,"error",err.message || "Gagal memuat file.");
   }
 }
 
@@ -220,7 +205,6 @@ async function deleteFile(id, name) {
     if (!result.success) throw new Error(result.message);
     alert("File berhasil dihapus.");
     searchFiles();
-    loadRecent();
   } catch (err) {
     alert(err.message || "Penghapusan gagal.");
   }
@@ -256,7 +240,9 @@ function fileToBase64(file) {
 
 function setBusy(busy) {
   els.uploadBtn.disabled = busy;
-  els.uploadBtn.textContent = busy ? "⏳ Mengupload..." : "⬆️ Upload & Kirim Link Raw";
+  els.uploadBtn.innerHTML = busy ? 
+    `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Mengupload...` : 
+    `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload & Kirim Link Raw`;
 }
 
 function setProgress(percent, text) {
@@ -282,9 +268,9 @@ async function copyText(text, button) {
     document.execCommand("copy");
     ta.remove();
   }
-  const old = button.textContent;
-  button.textContent = "✅ Tersalin";
-  setTimeout(() => button.textContent = old, 1400);
+  const old = button.innerHTML;
+  button.innerHTML = "✅ Tersalin";
+  setTimeout(() => button.innerHTML = old, 1400);
 }
 
 function formatBytes(bytes) {
@@ -301,5 +287,3 @@ function escapeAttr(s) { return escapeHtml(s); }
 function escapeJs(s) {
   return String(s ?? "").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\r/g,"\\r").replace(/\n/g,"\\n");
 }
-
-loadRecent();
