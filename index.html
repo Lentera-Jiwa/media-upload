@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Media Upload GitHub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <div>
+        <span class="badge">GITHUB MEDIA</span>
+        <h1>Upload Gambar, Video & Audio</h1>
+        <p>File disimpan di GitHub dan link Raw otomatis dicatat ke Google Spreadsheet.</p>
+      </div>
+      <div class="limit">Maks. <strong>25 MB</strong></div>
+    </header>
+
+    <section class="card">
+      <h2>Upload File</h2>
+
+      <form id="uploadForm">
+        <label>Nama Pengunjung <span>*</span></label>
+        <input id="visitor" required maxlength="150" placeholder="Tulis nama pengunjung">
+
+        <label>Jenis File <span>*</span></label>
+        <select id="type" required>
+          <option value="">-- Pilih jenis file --</option>
+          <option value="gambar">🖼️ Gambar</option>
+          <option value="video">🎬 Video</option>
+          <option value="audio">🎵 Audio</option>
+        </select>
+
+        <label>Pilih File <span>*</span></label>
+        <input id="file" type="file" required disabled>
+
+        <div id="fileInfo" class="file-info hidden"></div>
+
+        <label>Nama File <small>(opsional)</small></label>
+        <input id="customName" maxlength="255" placeholder="Kosongkan untuk memakai nama file asli">
+
+        <button id="uploadBtn" class="primary" type="submit">⬆️ Upload & Kirim Link Raw</button>
+
+        <div class="progress-wrap hidden" id="progressWrap">
+          <div class="progress"><div id="progressBar"></div></div>
+          <div id="progressText">Menyiapkan...</div>
+        </div>
+      </form>
+
+      <div id="uploadResult"></div>
+    </section>
+
+    <section class="card">
+      <h2>Pencarian File</h2>
+
+      <div class="search-grid">
+        <div>
+          <label>Cari Berdasarkan</label>
+          <select id="searchMode">
+            <option value="name">Nama File</option>
+            <option value="visitor">Nama Pengunjung</option>
+          </select>
+        </div>
+        <div>
+          <label>Kata Pencarian</label>
+          <input id="searchQuery" placeholder="Tulis nama file atau pengunjung">
+        </div>
+      </div>
+
+      <button id="searchBtn" class="secondary">🔎 Cari File</button>
+      <div id="searchResult"></div>
+    </section>
+
+    <section class="card">
+      <h2>File Terbaru</h2>
+      <button id="refreshBtn" class="secondary">↻ Muat Ulang</button>
+      <div id="recentResult"></div>
+    </section>
+
+    <footer>
+      <span>GitHub + Google Spreadsheet</span>
+      <span>•</span>
+      <span>Batas aplikasi: 25 MB/file</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
