@@ -156,3 +156,40 @@ footer { display: flex; justify-content: center; gap: 6px; color: #6b7280; font-
   .container { width: 95%; margin: 12px auto 30px; }
   .card { padding: 14px; }
 }
+
+/* Media Preview Styles */
+.media-preview {
+  margin: 10px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 280px;
+  border: 1px solid #e5e7eb;
+}
+
+.media-preview img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  background: #f9fafb;
+}
+
+.media-preview video {
+  width: 100%;
+  max-height: 280px;
+  outline: none;
+}
+
+.media-preview.audio-wrap {
+  background: #f0fdf4;
+  padding: 12px;
+  border-color: #a7f3d0;
+}
+
+.media-preview audio {
+  width: 100%;
+  outline: none;
+}
