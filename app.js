@@ -161,27 +161,43 @@ function renderItems(container, items, canDelete) {
     return;
   }
 
-  container.innerHTML = items.map(item => `
-    <div class="item">
-      <div class="item-head">
-        <div>
-          <h3>${escapeHtml(item.name)}</h3>
-          <div class="meta">
-            👤 ${escapeHtml(item.visitor)}<br>
-            📁 ${escapeHtml(item.type)} • ${escapeHtml(String(item.sizeMB))} MB
+  container.innerHTML = items.map(item => {
+    let mediaPreview = '';
+    const fileType = (item.type || '').toLowerCase();
+    const rawUrl = item.rawUrl;
+
+    // Menentukan jenis pratinjau berdasarkan tipe file atau ekstensi
+    if (fileType.includes('gambar') || /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(rawUrl)) {
+      mediaPreview = `<div class="media-preview"><img src="${escapeAttr(rawUrl)}" alt="${escapeAttr(item.name)}" loading="lazy"></div>`;
+    } else if (fileType.includes('video') || /\.(mp4|webm|mov|m4v|avi)$/i.test(rawUrl)) {
+      mediaPreview = `<div class="media-preview"><video controls preload="metadata"><source src="${escapeAttr(rawUrl)}">Browser Anda tidak Mendukung Pemutaran Video.</video></div>`;
+    } else if (fileType.includes('audio') || /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(rawUrl)) {
+      mediaPreview = `<div class="media-preview audio-wrap"><audio controls preload="none"><source src="${escapeAttr(rawUrl)}">Browser Anda tidak Mendukung Pemutaran Audio.</audio></div>`;
+    }
+
+    return `
+      <div class="item">
+        <div class="item-head">
+          <div>
+            <h3>${escapeHtml(item.name)}</h3>
+            <div class="meta">
+              👤 ${escapeHtml(item.visitor)}<br>
+              📁 ${escapeHtml(item.type)} • ${escapeHtml(String(item.sizeMB))} MB
+            </div>
           </div>
         </div>
+        ${mediaPreview}
+        <div class="raw">
+          <input readonly value="${escapeAttr(item.rawUrl)}">
+          <button class="secondary" type="button" onclick="copyText('${escapeJs(item.rawUrl)}', this)">📋 Copy Raw</button>
+        </div>
+        ${canDelete ? `
+          <div class="actions">
+            <button class="danger" type="button" onclick="deleteFile('${escapeJs(item.id)}','${escapeJs(item.name)}')">🗑️ Hapus File</button>
+          </div>` : ""}
       </div>
-      <div class="raw">
-        <input readonly value="${escapeAttr(item.rawUrl)}">
-        <button class="secondary" type="button" onclick="copyText('${escapeJs(item.rawUrl)}', this)">📋 Copy Raw</button>
-      </div>
-      ${canDelete ? `
-        <div class="actions">
-          <button class="danger" type="button" onclick="deleteFile('${escapeJs(item.id)}','${escapeJs(item.name)}')">🗑️ Hapus File</button>
-        </div>` : ""}
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 async function deleteFile(id, name) {
